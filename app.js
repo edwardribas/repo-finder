@@ -48,15 +48,31 @@ const updateRepositories = repoList => {
         repoTitleText.classList = "text";
         const repoTitleH2 = document.createElement('h2');
         repoTitleH2.textContent = obj.name;
+
         const repoTitleDate = document.createElement('p');
-        repoTitleDate.textContent = `Created at ${obj.created_at}`;
+        let date = obj.created_at;
+        let year = +date.substr(0, 4);
+        let month = +date.substr(5, 2);
+        let day = +date.substr(8, 2);
+        const getMonth = month => {
+            let months = [
+                'January', 'February', 'March',
+                'April', 'May', 'June',
+                'July', 'August', 'September',
+                'October', 'November', 'December',
+            ]
+            return months[month-1];
+        }
+        month = getMonth(month);
+        repoTitleDate.textContent = `Created at ${month} ${day}, ${year}`;
+
         [repoTitleH2, repoTitleDate].forEach(e => repoTitleText.appendChild(e));
         [repoTitleImage, repoTitleText].forEach(e => repoTitle.appendChild(e));
 
         // repo desc
         const repoDesc = document.createElement('p');
         repoDesc.classList = "repo_desc";
-        repoDesc.textContent = obj.description ? obj.description : "Repositório sem descrição.";
+        repoDesc.textContent = obj.description ? obj.description : "No description provided.";
 
         // repo tags
         const repoTags = document.createElement('div');
@@ -75,7 +91,9 @@ const updateRepositories = repoList => {
         repoLink.setAttribute('href', obj.html_url);
         repoLink.setAttribute('_target', "_blank");
 
-        [repoTitle, repoDesc, repoTags, repoLink].forEach(item => repo.appendChild(item));
+        [repoTitle, repoDesc, repoTags, repoLink].forEach(item => {
+            if (item.innerHTML) repo.appendChild(item)
+        });
         repositories.appendChild(repo);
     })
 }
@@ -91,7 +109,6 @@ const getRepositories = username => {
 
     }).then(json => {
         if (json) {
-            console.log(json);
             repositories.innerHTML = "";
             updateRepositories(json);
         }
