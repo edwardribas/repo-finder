@@ -147,15 +147,15 @@ const getUserData = username => {
             <p>Name: ${name}</p>
             <p>Created at ${getMonth(month)} ${day}, ${year}</p>
             <div class="social">
-                <div>
+                <div title="Followers">
                     <i class="fa-solid fa-user-group"></i>
                     <span>${followers}</span>
                 </div>
-                <div>
+                <div title="Following">
                     <i class="fa-solid fa-user-check"></i>
                     <span>${following}</span>
                 </div>
-                <div>
+                <div title="Public repositories">
                     <i class="fa-solid fa-folder"></i>
                     <span>${public_repos}</span>
                 </div>
