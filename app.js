@@ -1,11 +1,16 @@
 const repositories = document.querySelector('.repositories'),
-      generalInfo = document.querySelector('.general_info'),
+      profileInfo = document.querySelector('.general_info'),
       form = document.querySelector('form'),
       formInput = document.querySelector('form input'),
       errorBox = document.querySelector('.error'),
       errorTitle = document.querySelector('.error h1'),
       errorMsg = document.querySelector('.error p')
 ;
+
+let userReposResponse;
+let userProfileResponse;
+
+
 
 // error box
 const getError = errCode => {
@@ -42,131 +47,120 @@ const getMonth = month => {
     ]
     return months[month-1];
 }
+// creation date
+const getCreationDate = date => {
+    return {
+        year: +date.substr(0, 4),
+        month: getMonth(+date.substr(5, 2)),
+        day: +date.substr(8, 2)
+    }
+}
 
 // update repositories
-const updateRepositories = repoList => {
-    const [{owner: {login: authorUsername}}] = repoList;
+const updateRepositories = jsonRepositories => {
+    const [{owner: {login: authorUsername}}] = jsonRepositories;
     repositories.setAttribute('author', authorUsername);
+    repositories.innerHTML = "";
     
-    repoList.forEach(obj => {
-        // declarations
-        const repo = document.createElement('div');
-        const repoTitle = document.createElement('div');
-        const repoTitleImage = document.createElement('img');
-        const repoTitleText = document.createElement('div');
-        const repoTitleH2 = document.createElement('h2');
-        const repoTitleDate = document.createElement('p');
-        const repoDesc = document.createElement('p');
-        const repoTags = document.createElement('div');
-        const repoLink = document.createElement('a');
+    jsonRepositories.forEach(obj => {
+        const repositoryItem = document.createElement('div');
+        repositoryItem.classList = "repo";
 
-        // classes
-        repoTitle.classList = "repo_title"
-        repo.classList = "repo";
-        repoTitleText.classList = "text";
-        repoDesc.classList = "repo_desc";
-        repoTags.classList = "repo_tags";
-        repoLink.classList = "repo_link";
-
-        // repo name and date
-        repoTitleH2.textContent = obj.name;
-        let year = +obj.created_at.substr(0, 4);
-        let month = +obj.created_at.substr(5, 2);
-        let day = +obj.created_at.substr(8, 2);
-        repoTitleDate.textContent = `Created at ${getMonth(month)} ${day}, ${year}`;
-        repoTitleImage.src = obj.owner.avatar_url;
-
-        // text and date -> repoTitleText ; repoTitleText and repoTitleImage -> repoTitle
-        [repoTitleH2, repoTitleDate].forEach(e => repoTitleText.appendChild(e));
-        [repoTitleImage, repoTitleText].forEach(e => repoTitle.appendChild(e));
-
-        // repo description
-        repoDesc.textContent = obj.description ? obj.description : "No description provided.";
+        const repositoryTitle = document.createElement('div');
+        repositoryTitle.classList = "repo_title";
+        const repositoryCreatedAt = getCreationDate(obj.created_at);
+        repositoryTitle.innerHTML = `
+            <div class="text">
+                <img src="${obj.owner.avatar_url}">
+                <h2>${obj.name}</h2>
+                <p>Created at ${repositoryCreatedAt.month} ${repositoryCreatedAt.day}, ${repositoryCreatedAt.year}</p>
+            </div>
+        `;
+            
+        const repositoryDescription = document.createElement('p');
+        repositoryDescription.classList = "repo_desc";
+        repositoryDescription.textContent = obj.description ? obj.description : "No description provided.";
         
-        // repo tags
+        const repositoryTopics = document.createElement('div');
+        repositoryTopics.classList = "repo_tags";
         obj.topics.forEach(value => {
             const topic = document.createElement('span');
             topic.textContent = value;
-            repoTags.appendChild(topic);
+            repositoryTopics.appendChild(topic);
         })
 
-        // repo link
-        repoLink.textContent = "Visit";
-        repoLink.setAttribute('href', obj.html_url);
-        repoLink.setAttribute('target', "_blank");
+        const repositoryLink = document.createElement('a');
+        repositoryLink.classList = "repo_link";
+        repositoryLink.textContent = "Visit";
+        repositoryLink.setAttribute('href', obj.html_url);
+        repositoryLink.setAttribute('target', "_blank");
 
         // appends all the elements in the repo item
-        [repoTitle, repoDesc, repoTags, repoLink].forEach(item => {
-            if (item.innerHTML) repo.appendChild(item)
+        [repositoryTitle, repositoryDescription, repositoryTopics, repositoryLink].forEach(item => {
+            if (item.innerHTML) repositoryItem.appendChild(item)
         });
 
         // appends the repo item inside the repositories container
-        repositories.appendChild(repo);
+        repositories.appendChild(repositoryItem);
     })
 }
 
-// get git response
-const getRepositories = username => {
-    fetch("https://api.github.com/users/" + username + "/repos").then(response => {
-        if (response.status === 200) return response.json();
+const updateProfile = obj => {
+    const {
+        avatar_url, name, created_at, followers, 
+        following, public_repos, login, html_url
+    } = obj;
 
-        if (response.status !== 200 && !errorBox.classList.contains('active')) 
-            getError(response.status);
+    
+    const profileCreatedAt = getCreationDate(created_at);
 
-    }).then(json => {
-        if (json) {
-            repositories.innerHTML = "";
-            updateRepositories(json);
-        }
-    })
+    profileInfo.innerHTML = `
+        <img src="${avatar_url}">
+        <p>Name: ${name}</p>
+        <p>Created at ${profileCreatedAt.month} ${profileCreatedAt.day}, ${profileCreatedAt.year}</p>
+        <div class="social">
+            <div title="Followers">
+                <i class="fa-solid fa-user-group"></i>
+                <span>${followers}</span>
+            </div>
+            <div title="Following">
+                <i class="fa-solid fa-user-check"></i>
+                <span>${following}</span>
+            </div>
+            <div title="Public repositories">
+                <i class="fa-solid fa-folder"></i>
+                <span>${public_repos}</span>
+            </div>
+        </div>
+        <div class="links">
+            <a href="${html_url}" target="_blank">Go to profile</a>
+            <a href="https://github.com/${login}?tab=repositories" target="_blank">Repositories</a>
+        </div>
+    `;
+    profileInfo.classList.add('active');
 }
 
-// get user data
-const getUserData = username => {
-    fetch("https://api.github.com/users/" + username).then(res => {
-        return res.json()
-    }).then(json => {
-        
-        const {
-            avatar_url, 
-            name, 
-            created_at, 
-            followers, 
-            following, 
-            public_repos, 
-            login, 
-            html_url
-        } = json;
+// get repo and user data
+const fetchGitData = async username => {
+    // user
+    const profileResponse = await fetch(`https://api.github.com/users/${username}`);
+    if (profileResponse.status !== 200) {
+        getError(profileResponse.status);
+        return;
+    }
+    const profileData = await profileResponse.json();
+    
+    // repositories
+    const reposResponse = await fetch(`https://api.github.com/users/${username}/repos`); 
+    const reposData = await reposResponse.json();
+    
+    // data
+    userProfileResponse = {...profileData};
+    updateProfile(userProfileResponse);
 
-        const year = +created_at.substr(0, 4);
-        const month = +created_at.substr(5, 2);
-        const day = +created_at.substr(8, 2);
-
-        generalInfo.innerHTML = `
-            <img src="${avatar_url}">
-            <p>Name: ${name}</p>
-            <p>Created at ${getMonth(month)} ${day}, ${year}</p>
-            <div class="social">
-                <div title="Followers">
-                    <i class="fa-solid fa-user-group"></i>
-                    <span>${followers}</span>
-                </div>
-                <div title="Following">
-                    <i class="fa-solid fa-user-check"></i>
-                    <span>${following}</span>
-                </div>
-                <div title="Public repositories">
-                    <i class="fa-solid fa-folder"></i>
-                    <span>${public_repos}</span>
-                </div>
-            </div>
-            <div class="links">
-                <a href="${html_url}" target="_blank">Go to profile</a>
-                <a href="https://github.com/${login}?tab=repositories" target="_blank">Repositories</a>
-            </div>
-        `
-        generalInfo.classList.add('active');
-    })
+    userReposResponse = [...reposData];
+    updateRepositories(userReposResponse)
+    
 }
 
 // form submit
@@ -174,8 +168,8 @@ form.onsubmit = e => {
     e.preventDefault()
     const username = formInput.value;
     if (username === "" || username == repositories.getAttribute('author')) return;
-    getRepositories(username);
-    getUserData(username);
+    
+    fetchGitData(username);
 }
 
 // prevent spaces
