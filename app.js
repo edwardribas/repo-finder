@@ -89,7 +89,7 @@ const updateRepositories = repoList => {
         repoLink.classList = "repo_link";
         repoLink.textContent = "Visit";
         repoLink.setAttribute('href', obj.html_url);
-        repoLink.setAttribute('_target', "_blank");
+        repoLink.setAttribute('target', "_blank");
 
         [repoTitle, repoDesc, repoTags, repoLink].forEach(item => {
             if (item.innerHTML) repo.appendChild(item)
