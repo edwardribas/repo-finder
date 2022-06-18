@@ -1,4 +1,5 @@
 const repositories = document.querySelector('.repositories'),
+      generalInfo = document.querySelector('.general_info'),
       form = document.querySelector('form'),
       formInput = document.querySelector('form input'),
       errorBox = document.querySelector('.error'),
@@ -44,8 +45,8 @@ const getMonth = month => {
 
 // update repositories
 const updateRepositories = repoList => {
-    const [{owner: {login: author}}] = repoList;
-    repositories.setAttribute('author', author);
+    const [{owner: {login: authorUsername}}] = repoList;
+    repositories.setAttribute('author', authorUsername);
     
     repoList.forEach(obj => {
         // declarations
@@ -120,12 +121,61 @@ const getRepositories = username => {
     })
 }
 
+// get user data
+const getUserData = username => {
+    fetch("https://api.github.com/users/" + username).then(res => {
+        return res.json()
+    }).then(json => {
+        
+        const {
+            avatar_url, 
+            name, 
+            created_at, 
+            followers, 
+            following, 
+            public_repos, 
+            login, 
+            html_url
+        } = json;
+
+        const year = +created_at.substr(0, 4);
+        const month = +created_at.substr(5, 2);
+        const day = +created_at.substr(8, 2);
+
+        generalInfo.innerHTML = `
+            <img src="${avatar_url}">
+            <p>Name: ${name}</p>
+            <p>Created at ${getMonth(month)} ${day}, ${year}</p>
+            <div class="social">
+                <div>
+                    <i class="fa-solid fa-user-group"></i>
+                    <span>${followers}</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>${following}</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-folder"></i>
+                    <span>${public_repos}</span>
+                </div>
+            </div>
+            <div class="links">
+                <a href="${html_url}" target="_blank">Go to profile</a>
+                <a href="https://github.com/${login}?tab=repositories" target="_blank">Repositories</a>
+            </div>
+        `
+        generalInfo.classList.add('active');
+    })
+}
+
 // form submit
 form.onsubmit = e => {
     e.preventDefault()
     const username = formInput.value;
     if (username === "" || username == repositories.getAttribute('author')) return;
     getRepositories(username);
+    getUserData(username);
 }
 
 // prevent spaces

@@ -99,24 +99,94 @@ form button:hover{
     background-color: rgb(30, 30, 30);
 }
 
+/* General info */
+.general_info{
+    display: none;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1110px;
+    margin: 0 auto 30px;
+    border: 1px solid rgb(40, 40, 40);
+    padding: 24px 22px;
+    border-radius: 8px;
+    text-align: center;
+}
+.general_info.active{
+    display: flex;
+}
+.general_info img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    object-fit: cover;
+}
+.general_info > p{
+    font-weight: 300;
+    line-height: 1.4;
+}
+.general_info .social{
+    margin: 15px 0 23px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+.general_info .social > div{
+    border-radius: 8px;
+    border: 1px solid rgb(40, 40, 40);
+    padding: 9px 13px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.general_info .social > div i{
+    font-size: .95rem;
+}
+.general_info .links{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.general_info .links a{
+    border-radius: 5px;
+    background-color: #364fc7;
+    color: #fff;
+    padding: 10px 16px;
+    font-weight: 400;
+}
+
+/* Facts */
+.curious_facts{
+    text-align: center;
+}
+.curious_facts h2{
+    font-size: 1.35rem;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+.curious_facts a{
+    margin-top: 25px;
+}
+
 /* Repository */
 .repositories{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 50px;
+    gap: 30px;
     margin-bottom: 100px;
 }
 .repo{
     width: 100%;
     max-width: 350px;
     border: 1px solid rgb(40, 40, 40);
+    border-radius: 8px;
     padding: 24px 22px;
-    background-color: rgb(22, 22, 22);
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 12px;
 }
 
 .repo_title{
