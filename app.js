@@ -22,10 +22,10 @@ const getError = errCode => {
             boxErrorMessage = `Verifique a sintaxe do campo de busca.`
             break;
         default:
-            boxErrorMessage = `Pesquisa inválida.`;
+            boxErrorMessage = `Procure se informar sobre o erro.`;
     }
     
-    errorMsg.textContent = boxErrorMessage
+    errorMsg.textContent = boxErrorMessage;
     errorBox.classList.add('active');
 
     error = setTimeout(() => {
@@ -33,71 +33,78 @@ const getError = errCode => {
     }, 2000)
 }
 
+// get months
+const getMonth = month => {
+    let months = [ 
+        'January', 'February', 'March', 'April', 'May', 'June', 
+        'July', 'August', 'September', 'October', 'November', 'December' 
+    ]
+    return months[month-1];
+}
+
 // update repositories
 const updateRepositories = repoList => {
+    const [{owner: {login: author}}] = repoList;
+    repositories.setAttribute('author', author);
+    
     repoList.forEach(obj => {
+        // declarations
         const repo = document.createElement('div');
-        repo.classList = "repo"
-
-        // repo title
         const repoTitle = document.createElement('div');
-        repoTitle.classList = "repo_title"
         const repoTitleImage = document.createElement('img');
-        repoTitleImage.src = obj.owner.avatar_url;
         const repoTitleText = document.createElement('div');
-        repoTitleText.classList = "text";
         const repoTitleH2 = document.createElement('h2');
-        repoTitleH2.textContent = obj.name;
-
         const repoTitleDate = document.createElement('p');
-        let date = obj.created_at;
-        let year = +date.substr(0, 4);
-        let month = +date.substr(5, 2);
-        let day = +date.substr(8, 2);
-        const getMonth = month => {
-            let months = [
-                'January', 'February', 'March',
-                'April', 'May', 'June',
-                'July', 'August', 'September',
-                'October', 'November', 'December',
-            ]
-            return months[month-1];
-        }
-        month = getMonth(month);
-        repoTitleDate.textContent = `Created at ${month} ${day}, ${year}`;
+        const repoDesc = document.createElement('p');
+        const repoTags = document.createElement('div');
+        const repoLink = document.createElement('a');
 
+        // classes
+        repoTitle.classList = "repo_title"
+        repo.classList = "repo";
+        repoTitleText.classList = "text";
+        repoDesc.classList = "repo_desc";
+        repoTags.classList = "repo_tags";
+        repoLink.classList = "repo_link";
+
+        // repo name and date
+        repoTitleH2.textContent = obj.name;
+        let year = +obj.created_at.substr(0, 4);
+        let month = +obj.created_at.substr(5, 2);
+        let day = +obj.created_at.substr(8, 2);
+        repoTitleDate.textContent = `Created at ${getMonth(month)} ${day}, ${year}`;
+        repoTitleImage.src = obj.owner.avatar_url;
+
+        // text and date -> repoTitleText ; repoTitleText and repoTitleImage -> repoTitle
         [repoTitleH2, repoTitleDate].forEach(e => repoTitleText.appendChild(e));
         [repoTitleImage, repoTitleText].forEach(e => repoTitle.appendChild(e));
 
-        // repo desc
-        const repoDesc = document.createElement('p');
-        repoDesc.classList = "repo_desc";
+        // repo description
         repoDesc.textContent = obj.description ? obj.description : "No description provided.";
-
+        
         // repo tags
-        const repoTags = document.createElement('div');
-        repoTags.classList = "repo_tags";
-        const topics = obj.topics;
-        topics.forEach(value => {
+        obj.topics.forEach(value => {
             const topic = document.createElement('span');
             topic.textContent = value;
             repoTags.appendChild(topic);
         })
 
         // repo link
-        const repoLink = document.createElement('a');
-        repoLink.classList = "repo_link";
         repoLink.textContent = "Visit";
         repoLink.setAttribute('href', obj.html_url);
         repoLink.setAttribute('target', "_blank");
 
+        // appends all the elements in the repo item
         [repoTitle, repoDesc, repoTags, repoLink].forEach(item => {
             if (item.innerHTML) repo.appendChild(item)
         });
+
+        // appends the repo item inside the repositories container
         repositories.appendChild(repo);
     })
-}
 
+
+}
 
 // get git response
 const getRepositories = username => {
@@ -120,12 +127,14 @@ form.onsubmit = e => {
     e.preventDefault()
     const username = formInput.value;
     if (username === "") return;
+
+    if (username == repositories.getAttribute('author')) return;
+
+    console.log('Pesquisando...')
     getRepositories(username);
 }
 
-// prevent spaces and username max length
+// prevent spaces
 formInput.oninput = e => {
-    if (e.data === " " || formInput.value.length === 40) {
-        formInput.value = formInput.value.substring(0, formInput.value.length-1)
-    }
+    if (e.data === " ") formInput.value = formInput.value.replace(" ", "");
 }
