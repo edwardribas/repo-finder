@@ -300,3 +300,14 @@ form button:hover{
     font-size: 1.1rem;
     font-weight: 400;
 }
+
+@media(max-width: 1289px){
+    .general_info{
+        max-width: 735px;
+    }
+}
+@media(max-width: 853px){
+    .general_info{
+        max-width: 350px;
+    }
+}
