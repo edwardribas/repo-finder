@@ -102,8 +102,6 @@ const updateRepositories = repoList => {
         // appends the repo item inside the repositories container
         repositories.appendChild(repo);
     })
-
-
 }
 
 // get git response
@@ -126,11 +124,7 @@ const getRepositories = username => {
 form.onsubmit = e => {
     e.preventDefault()
     const username = formInput.value;
-    if (username === "") return;
-
-    if (username == repositories.getAttribute('author')) return;
-
-    console.log('Pesquisando...')
+    if (username === "" || username == repositories.getAttribute('author')) return;
     getRepositories(username);
 }
 
