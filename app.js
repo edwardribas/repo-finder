@@ -1,65 +1,40 @@
 const repositories = document.querySelector('.repositories'),
-      profileInfo = document.querySelector('.general_info'),
-      form = document.querySelector('form'),
-      formInput = document.querySelector('form input'),
-      errorBox = document.querySelector('.error'),
-      errorTitle = document.querySelector('.error h1'),
-      errorMsg = document.querySelector('.error p')
+    profileInfo = document.querySelector('.general_info'),
+    form = document.querySelector('form'),
+    formInput = document.querySelector('form input'),
+    errorBox = document.querySelector('.error'),
+    errorTitle = document.querySelector('.error h1'),
+    errorMsg = document.querySelector('.error p'),
+    months = [ 
+    'January', 'February', 'March', 'April', 'May', 'June', 
+    'July', 'August', 'September', 'October', 'November', 'December' 
+    ]
 ;
 
+// fetch data storage
 let userReposResponse;
 let userProfileResponse;
 
-
-
 // error box
 const getError = errCode => {
-    errorTitle.textContent = `Ocorreu uma falha (${errCode})`;
-    let boxErrorMessage;
-
-    switch(errCode){
-        case 403:
-            boxErrorMessage = `Limite de requisição atingido =P`
-            break;
-        case 404:
-            boxErrorMessage = `Usuário não encontrado.`
-            break;
-        case 400:
-            boxErrorMessage = `Verifique a sintaxe do campo de busca.`
-            break;
-        default:
-            boxErrorMessage = `Procure se informar sobre o erro.`;
+    const errors = {
+        403: "Reached request limit.",
+        404: "User not found.",
+        400: "Verify the field's syntax."
     }
-    
-    errorMsg.textContent = boxErrorMessage;
+
+    errorTitle.textContent = `An error has occurred (${errCode})`;
+    errorMsg.textContent = errors[errCode] || "Unknown error.";
     errorBox.classList.add('active');
 
-    error = setTimeout(() => {
-        errorBox.classList.remove('active');
-    }, 2000)
-}
-
-// get months
-const getMonth = month => {
-    let months = [ 
-        'January', 'February', 'March', 'April', 'May', 'June', 
-        'July', 'August', 'September', 'October', 'November', 'December' 
-    ]
-    return months[month-1];
-}
-// creation date
-const getCreationDate = date => {
-    return {
-        year: +date.substr(0, 4),
-        month: getMonth(+date.substr(5, 2)),
-        day: +date.substr(8, 2)
-    }
+    const errorTimeout = setTimeout(() =>
+        errorBox.classList.remove('active'), 2000)
 }
 
 // update repositories
 const updateRepositories = jsonRepositories => {
     const [{owner: {login: authorUsername}}] = jsonRepositories;
-    repositories.setAttribute('author', authorUsername);
+    repositories.setAttribute('author', authorUsername.toLowerCase());
     repositories.innerHTML = "";
     
     jsonRepositories.forEach(obj => {
@@ -68,12 +43,16 @@ const updateRepositories = jsonRepositories => {
 
         const repositoryTitle = document.createElement('div');
         repositoryTitle.classList = "repo_title";
-        const repositoryCreatedAt = getCreationDate(obj.created_at);
+        const repositoryCreatedAt = new Date(obj.created_at);
         repositoryTitle.innerHTML = `
             <div class="text">
                 <img src="${obj.owner.avatar_url}">
                 <h2>${obj.name}</h2>
-                <p>Created at ${repositoryCreatedAt.month} ${repositoryCreatedAt.day}, ${repositoryCreatedAt.year}</p>
+                <p>Created at ${repositoryCreatedAt.toLocaleDateString('en-us', {
+                    month: 'long',
+                    day: '2-digit',
+                    year: 'numeric'
+                })}</p>
             </div>
         `;
             
@@ -110,14 +89,17 @@ const updateProfile = obj => {
         avatar_url, name, created_at, followers, 
         following, public_repos, login, html_url
     } = obj;
-
     
-    const profileCreatedAt = getCreationDate(created_at);
+    const profileCreatedAt = new Date(created_at)
 
     profileInfo.innerHTML = `
         <img src="${avatar_url}">
         <p>Name: ${name}</p>
-        <p>Created at ${profileCreatedAt.month} ${profileCreatedAt.day}, ${profileCreatedAt.year}</p>
+        <p>Created at ${profileCreatedAt.toLocaleDateString('en-us', {
+            month: 'long',
+            day: '2-digit',
+            year: 'numeric'
+        })}</p>
         <div class="social">
             <div title="Followers">
                 <i class="fa-solid fa-user-group"></i>
@@ -140,9 +122,8 @@ const updateProfile = obj => {
     profileInfo.classList.add('active');
 }
 
-// get repo and user data
-const fetchGitData = async username => {
-    // user
+const fetchUserData = async username => {
+    // profile
     const profileResponse = await fetch(`https://api.github.com/users/${username}`);
     if (profileResponse.status !== 200) {
         getError(profileResponse.status);
@@ -160,19 +141,18 @@ const fetchGitData = async username => {
 
     userReposResponse = [...reposData];
     updateRepositories(userReposResponse)
-    
 }
 
 // form submit
 form.onsubmit = e => {
     e.preventDefault()
     const username = formInput.value;
-    if (username === "" || username == repositories.getAttribute('author')) return;
-    
-    fetchGitData(username);
+    if (username === "" || username.toLowerCase() == repositories.getAttribute('author')) return;
+    fetchUserData(username);
 }
 
 // prevent spaces
 formInput.oninput = e => {
-    if (e.data === " ") formInput.value = formInput.value.replace(" ", "");
+    const replacedInputValue = formInput.value.replaceAll(' ', '');
+    if (e.inputType === 'insertFromPaste' && !e.data || e.data && e.data.includes(' ')) formInput.value = replacedInputValue;
 }
