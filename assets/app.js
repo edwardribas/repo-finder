@@ -51,6 +51,15 @@
     
     // update repositories
     const updateRepositories = (jsonRepositories) => {
+        // jejenee
+        if (!jsonRepositories.length) {
+            [loadingIcon, filtersContainer, filterButton].forEach(e => e.classList.remove('active'))
+            filters.forEach(e => e.classList.remove('active'));
+            repositories.innerHTML = '';
+            repositories.setAttribute('author', '');
+            selectedFilter === undefined;
+            return;
+        }
         const [{owner: {login: authorUsername}}] = jsonRepositories;
         repositories.setAttribute('author', authorUsername.toLowerCase());
         repositories.innerHTML = "";
