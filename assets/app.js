@@ -12,15 +12,15 @@
     // fetch data storage
     let userReposResponse;
     let userProfileResponse;
-    let selectedFilter = undefined;
+    let sortBy = undefined;
     
-    // filter repo items
+    // sort repo items
     const sortRepositoryItems = isThereAFilter => {
         const repoItems = Array.from(document.querySelectorAll('.repo'));
 
         if (isThereAFilter) {
             repoItems.forEach((e, i) => {
-                selectedFilter === 0
+                sortBy === 0
                     ? repoItems.sort((a, b) => new Date(a.dataset.date) - new Date(b.dataset.date))
                     : repoItems.sort((a, b) => new Date(b.dataset.date) - new Date(a.dataset.date))
                 repositories.appendChild(e);
@@ -53,11 +53,11 @@
     const updateRepositories = (jsonRepositories) => {
         // jejenee
         if (!jsonRepositories.length) {
-            [loadingIcon, filtersContainer, filterButton].forEach(e => e.classList.remove('active'))
-            filters.forEach(e => e.classList.remove('active'));
+            [loadingIcon, filtersContainer, sortButton].forEach(e => e.classList.remove('active'))
+            sortItem.forEach(e => e.classList.remove('active'));
             repositories.innerHTML = '';
             repositories.setAttribute('author', '');
-            selectedFilter === undefined;
+            sortBy === undefined;
             return;
         }
         const [{owner: {login: authorUsername}}] = jsonRepositories;
@@ -159,12 +159,12 @@
         const profileResponse = await fetch(`https://api.github.com/users/${username}`);
         if (profileResponse.status !== 200) {
             getError(profileResponse.status);
-            [loadingIcon, filtersContainer, filterButton, profileInfo].forEach(e => e.classList.remove('active'))
-            filters.forEach(e => e.classList.remove('active'));
+            [loadingIcon, filtersContainer, sortButton, profileInfo].forEach(e => e.classList.remove('active'))
+            sortItem.forEach(e => e.classList.remove('active'));
             repositories.innerHTML = '';
             profileInfo.innerHTML = '';
             repositories.setAttribute('author', '');
-            selectedFilter === undefined;
+            sortBy === undefined;
             return
         }
         const profileData = await profileResponse.json();
@@ -180,7 +180,7 @@
         updateProfile(userProfileResponse);
     
         userReposResponse = [...reposData];
-        updateRepositories(userReposResponse, selectedFilter !== undefined)
+        updateRepositories(userReposResponse, sortBy !== undefined)
     }
     
     // form submit
@@ -198,31 +198,32 @@
     }
     
     // Filters
-    const filterButton = document.querySelector('main > fieldset button'),
+    const sortButton = document.querySelector('main > fieldset button'),
     filtersContainer = document.querySelector('main > fieldset > fieldset'),
-    filters = document.querySelectorAll('main > fieldset > fieldset span');
+    sortItem = document.querySelectorAll('main > fieldset > fieldset span');
     
-    const handleFilters = () => {
-        filterButton.classList.toggle('active');
-        filtersContainer.classList.toggle('active', filterButton.classList.contains('active'));
+    const handleSort = () => {
+        sortButton.classList.toggle('active');
+        filtersContainer.classList.toggle('active', sortButton.classList.contains('active'));
+
         if (!filtersContainer.classList.contains('active')) {
-            selectedFilter = undefined;
-            filters.forEach(e => e.classList.remove('active'));
+            sortBy = undefined;
+            sortItem.forEach(e => e.classList.remove('active'));
             sortRepositoryItems(false);
         }
     }
     
-    const handleSelectFilter = (query, index) => {
-        if (selectedFilter === index) return;
+    const handleSelectOrder = (query, index) => {
+        if (sortBy === index) return;
         if (!repositories.children.length) return;
-        filters.forEach(e => e.classList.remove('active'));
+        sortItem.forEach(e => e.classList.remove('active'));
         query.classList.add('active');
-        selectedFilter = index;
-        sortRepositoryItems(selectedFilter !== undefined);
+        sortBy = index;
+        sortRepositoryItems(sortBy !== undefined);
     }
     
-    filters.forEach((e, i) => {
-        e.onclick = () => handleSelectFilter(e, i)
+    sortItem.forEach((e, i) => {
+        e.onclick = () => handleSelectOrder(e, i)
     })
-    filterButton.onclick = () => handleFilters();
+    sortButton.onclick = () => handleSort();
 })()
