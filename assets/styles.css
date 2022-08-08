@@ -20,7 +20,7 @@ a, button, input, img, span{
 
 /* General */
 html, body{
-    min-height: 100vh;
+    min-height: calc(100vh + 1px);
     scroll-behavior: smooth;
 }
 body{
@@ -59,11 +59,45 @@ main > h1 i{
     font-size: 1.4rem;
 }
 
+/* Loading */
+.loading{
+    top: -30px;
+    position: relative;
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    width: 25px;
+    height: 25px;
+    border: 1px solid white;
+    border-radius: 50%;
+    transition: .12s ease;
+}
+.loading.active{
+    opacity: 1;
+    visibility: visible;
+    animation: rotate 1s linear infinite;
+}
+.loading::after{
+    border-radius: 50%;
+    background-color: #141414;
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 17px;
+    height: 10px;
+    content: '';
+}
+@keyframes rotate {
+    from{ transform: rotate(0deg) }
+    to { transform: rotate(360deg) }
+}
+
 /* Form */
 form{
     width: 100%;
-    max-width: 400px;
-    margin: 30px auto 60px;
+    max-width: 350px;
+    margin: 30px auto 10px;
 
     display: flex;
     justify-content: space-between;
@@ -97,6 +131,82 @@ form button{
 }
 form button:hover{
     background-color: rgb(30, 30, 30);
+}
+main > fieldset{
+    gap: 10px;
+    width: 100%;
+    max-width: 350px;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 60px;
+}
+main > fieldset button{
+    display: flex;
+    align-items: center;
+    user-select: none;
+    outline: none;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: rgb(20, 20, 20);
+    border: 1px solid rgb(50, 50, 50);
+    color: rgb(150, 150, 150);
+    font-weight: 200;
+    font-size: .93rem;
+    gap: 10px;
+    transition: background-color .2s ease;
+}
+main > fieldset button.active, main > fieldset > fieldset span.active{
+    background-color: rgb(30, 30, 30);
+}
+main > fieldset > fieldset{
+    border: none;
+    display: flex;
+    width: 100%;
+    justify-content: stretch;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-5px);
+    z-index: -1;
+    transition: .2s ease;
+}
+main > fieldset > fieldset.active{
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    z-index: 1;
+}
+main > fieldset > fieldset span{
+    display: flex;
+    gap: 10px;
+    white-space: nowrap;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: rgb(20, 20, 20);
+    border: 1px solid rgb(50, 50, 50);
+    color: rgb(150, 150, 150);
+    font-weight: 200;
+    font-size: .93rem;
+    outline: none;
+    transition: background-color .2s ease;
+}
+
+@media (max-width: 400px) {
+    main > fieldset{
+        flex-direction: column;
+    }
+    main > fieldset > fieldset{
+        transform: translateY(-5px);
+    }
+    main > fieldset > fieldset.active{
+        transform: translateY(0);
+    }
 }
 
 /* General info */
@@ -146,7 +256,7 @@ form button:hover{
 }
 .general_info .links{
     display: flex;
-    justify-content: center
+    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
 }
@@ -202,6 +312,7 @@ form button:hover{
     width: 50px;
     height: 50px;
     object-fit: cover;
+    margin-bottom: 15px;
     border-radius: 50%;
 }
 .repo_title .text h2{

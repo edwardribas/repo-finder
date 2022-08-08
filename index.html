@@ -8,8 +8,8 @@
 
     <!-- General -->
     <title>Github API</title>
-    <link rel="stylesheet" href="./styles.css">
-    <link rel="shortcut icon" href="./github.svg">
+    <link rel="stylesheet" href="./assets/styles.css">
+    <link rel="shortcut icon" href="./assets/github.svg">
     <script src="https://kit.fontawesome.com/932eb47ff0.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -20,6 +20,19 @@
             <input type="text" placeholder="Search for usernames in Github" autocomplete="off" spellcheck="false" autofocus maxlength="39">
             <button><i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
+        <fieldset>
+            <button>
+                <i class="fa-solid fa-calendar"></i>
+                <span>Filtro</span>
+            </button>
+            <fieldset>
+                <span>Mais antigo</span>
+                <span>Mais recente</span>
+            </fieldset>
+        </fieldset>
+
+        <div aria-label="Loading" class="loading">
+        </div>
 
         <div class="general_info">
         </div>
@@ -35,6 +48,6 @@
 
 
     <!-- Application -->
-    <script src="./app.js"></script>
+    <script src="./assets/app.js"></script>
 </body>
 </html>
