@@ -76,7 +76,6 @@
     
             repositoryTitle.innerHTML = `
                 <div class="text">
-                    <img src="${obj.owner.avatar_url}">
                     <h2>${obj.name}</h2>
                     <p>Created at ${repositoryCreatedAt.toLocaleDateString('en-us', {
                         month: 'long',
@@ -124,7 +123,7 @@
     
         profileInfo.innerHTML = `
             <img src="${avatar_url}">
-            Name: ${name ? name : 'Unavailable'}
+            <p>Name: ${name ? name : 'Unavailable'}</p>
             <p>Created at ${profileCreatedAt.toLocaleDateString('en-us', {
                 month: 'long',
                 day: '2-digit',
@@ -146,7 +145,7 @@
             </div>
             <div class="links">
                 <a href="${html_url}" target="_blank">Go to profile</a>
-                <a href="https://github.com/${login}?tab=repositories" target="_blank">Repositories</a>
+                <a href="https://github.com/${login}?tab=repositories" target="_blank">Visit repositories</a>
             </div>
         `;
         profileInfo.classList.add('active');

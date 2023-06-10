@@ -110,7 +110,7 @@ form input{
     border-radius: 8px;
     border: 1px solid rgb(50, 50, 50);
     background-color: transparent;
-    color: rgb(210, 210, 210);
+    color: rgb(235, 235, 235);
     font-weight: 200;
     font-size: .93rem;
 }
@@ -126,7 +126,7 @@ form button{
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    color: #485fd2;
+    color: #ffffff;
     transition: background-color .2s ease;
 }
 form button:hover{
@@ -139,7 +139,7 @@ main > fieldset{
     border: none;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 60px;
+    margin-bottom: 42px;
 }
 main > fieldset button{
     display: flex;
@@ -151,7 +151,7 @@ main > fieldset button{
     border-radius: 8px;
     background-color: rgb(20, 20, 20);
     border: 1px solid rgb(50, 50, 50);
-    color: rgb(150, 150, 150);
+    color: rgb(235, 235, 235);
     font-weight: 200;
     font-size: .93rem;
     gap: 10px;
@@ -234,7 +234,10 @@ main > fieldset > fieldset span{
 }
 .general_info > p{
     font-weight: 300;
-    line-height: 1.4;
+    line-height: 1.5;
+}
+.general_info > p:first-of-type{
+    font-weight: 500;
 }
 .general_info .social{
     margin: 15px 0 23px;
@@ -258,52 +261,47 @@ main > fieldset > fieldset span{
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px;
 }
 .general_info .links a{
-    border-radius: 5px;
-    background-color: #364fc7;
-    color: #fff;
-    padding: 10px 16px;
+    display: inline-block;
+    text-align: center;
+    margin-top: 25px;
+    padding: 12px 20px;
     font-weight: 400;
+    font-size: .95rem;
+    border-radius: 9px;
+    background-color: transparent;
+    color: #d1d1d1;
 }
 
-/* Facts */
-.curious_facts{
-    text-align: center;
-}
-.curious_facts h2{
-    font-size: 1.35rem;
-    margin-bottom: 16px;
-    font-weight: 500;
-}
-.curious_facts a{
-    margin-top: 25px;
+.general_info .links a:first-of-type{
+    background-color: #ffffff;
+    color: #181818;
 }
 
 /* Repository */
 .repositories{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 30px;
+    width: 100%;
+    max-width: 1110px;
     margin-bottom: 100px;
 }
 .repo{
     width: 100%;
-    max-width: 350px;
     border: 1px solid rgb(40, 40, 40);
     border-radius: 8px;
     padding: 24px 22px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .repo_title{
     display: flex;
     flex-direction: column;
-    text-align: center;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
@@ -317,26 +315,24 @@ main > fieldset > fieldset span{
 }
 .repo_title .text h2{
     font-size: 1.1rem;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 10px;
 }
 .repo_title .text p{
-    font-size: .9rem;
+    font-size: .95rem;
     color: rgb(200, 200, 200);
     font-weight: 200;
 }
 
 .repo_desc{
     font-weight: 200;
-    color: rgb(220, 220, 220);
+    color: rgb(200, 200, 200);
     line-height: 1.1;
     font-size: .95rem;
-    text-align: center;
 }
 
 .repo_tags{
     display: flex;
-    justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 20px;
@@ -354,11 +350,13 @@ main > fieldset > fieldset span{
     display: inline-block;
     text-align: center;
     margin-top: 25px;
-    padding: 12px 24px;
+    padding: 12px 20px;
     font-weight: 300;
-    border-radius: 6px;
-    background-color: #364fc7;
-    color: #fff;
+    font-weight: 400;
+    font-size: .95rem;
+    border-radius: 9px;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .error{
@@ -420,5 +418,11 @@ main > fieldset > fieldset span{
 @media(max-width: 853px){
     .general_info{
         max-width: 350px;
+    }
+}
+
+@media (max-width: 450px) {
+    .repositories {
+        grid-template-columns: 1fr;
     }
 }
