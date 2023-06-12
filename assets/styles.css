@@ -410,17 +410,6 @@ main > fieldset > fieldset span{
     font-weight: 400;
 }
 
-@media(max-width: 1289px){
-    .general_info{
-        max-width: 735px;
-    }
-}
-@media(max-width: 853px){
-    .general_info{
-        max-width: 350px;
-    }
-}
-
 @media (max-width: 450px) {
     .repositories {
         grid-template-columns: 1fr;
